@@ -16,15 +16,10 @@ app.use(cors());
 app.use(express.json());
 // Router
 app.use('/api/contacts', contactsRouter);
-// Error 404 - variants
-// With createError package
+// Error 404 - variant
 app.use((req, res, next) => {
   next(createError(404, 'Wrong Path'));
 });
-// With custom metod
-// app.use((req, res, next) => {
-//   next(new HttpError(404, 'Wrong Path'));
-// });
 
 // Global Errors handler
 app.use((err, req, res, next) => {
