@@ -1,20 +1,15 @@
 const { getContacts } = require('../models');
-const { catchAsync } = require('../utils');
+const { catchAsync, HttpError } = require('../utils');
 
 exports.checkBody = (req, res, next) => {
   const bodyKeys = Object.keys(req.body);
-  if (bodyKeys.length < 1) {
-    res.status(400).json({ message: 'missing body' });
-    return;
-  }
+  if (bodyKeys.length < 1) throw new HttpError(400, 'missing body');
+
   const check = bodyKeys.map((item) => {
     if (item === 'name' || item === 'email' || item === 'phone') return true;
     return false;
   });
-  if (check.includes(false)) {
-    res.status(400).json({ message: 'vrong fields' });
-    return;
-  }
+  if (check.includes(false)) throw new HttpError(400, 'vrong fields');
   next();
 };
 
@@ -23,10 +18,10 @@ exports.checkId = catchAsync(async (req, res, next) => {
   const contacts = await getContacts();
   const [contact] = contacts.filter((item) => item.id === id);
 
-  if (!contact) {
-    res.status(404).json({ message: `Contact ID: ${id} Not found` });
-    return;
-  }
+  // example of use custom HttpError
+  if (id.length < 15) throw new HttpError(400, 'Invalid ID!');
+
+  if (!contact) throw new HttpError(404, `Contact ID: ${id} Not found`);
   req.contact = contact;
   next();
 });

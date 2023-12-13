@@ -1,6 +1,6 @@
 const uuid = require('uuid').v4;
 
-const { catchAsync, contactsValidators } = require('../utils');
+const { catchAsync, contactsValidators, HttpError } = require('../utils');
 const { writeContacts, getContacts } = require('../models');
 
 exports.listContacts = catchAsync(async (req, res) => {
@@ -14,10 +14,7 @@ exports.getContactById = (req, res) => {
 exports.addContact = catchAsync(async ({ body }, res) => {
   const { value, error } = contactsValidators.createContactValidator(body);
   if (error) {
-    res
-      .status(400)
-      .json({ message: `missing required field - ${error.message}` });
-    return;
+    throw new HttpError(400, `missing required field: ${error.message}`);
   }
   const { name, email, phone } = value;
   const newContact = {
