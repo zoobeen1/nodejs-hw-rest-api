@@ -1,10 +1,10 @@
 const uuid = require('uuid').v4;
 
 const { catchAsync, contactsValidators, HttpError } = require('../utils');
-const { writeContacts, getContacts } = require('../models');
+const dataBase = require('../models');
 
 exports.listContacts = catchAsync(async (req, res) => {
-  const contacts = await getContacts();
+  const contacts = await dataBase.getContacts();
   res.json(contacts);
 });
 exports.getContactById = (req, res) => {
@@ -23,15 +23,15 @@ exports.addContact = catchAsync(async ({ body }, res) => {
     email,
     phone,
   };
-  const contacts = await getContacts();
+  const contacts = await dataBase.getContacts();
   contacts.push(newContact);
-  await writeContacts(contacts);
+  await dataBase.writeContacts(contacts);
   res.status(201).json(newContact);
 });
 
 exports.updateContact = catchAsync(async (req, res) => {
   const { contact } = req;
-  const contacts = await getContacts();
+  const contacts = await dataBase.getContacts();
   const updatedContact = { ...contact, ...req.body };
 
   const newContacts = contacts.map((item) => {
@@ -40,15 +40,15 @@ exports.updateContact = catchAsync(async (req, res) => {
     }
     return item;
   });
-  await writeContacts(newContacts);
+  await dataBase.writeContacts(newContacts);
   res.json(updatedContact);
 });
 
 exports.removeContact = catchAsync(async (req, res) => {
-  const contacts = await getContacts();
+  const contacts = await dataBase.getContacts();
   const { contact } = req;
 
   const filteredContacts = contacts.filter((item) => item.id !== contact.id);
-  await writeContacts(filteredContacts);
+  await dataBase.writeContacts(filteredContacts);
   res.status(200).json({ message: 'contact deleted' });
 });
