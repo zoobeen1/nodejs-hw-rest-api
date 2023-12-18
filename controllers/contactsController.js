@@ -19,13 +19,18 @@ exports.addContact = catchAsync(async (req, res) => {
 
 exports.updateContact = catchAsync(async (req, res) => {
   const id = req.params.contactId;
-  const { name, email, phone, favorite } = req.body;
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  res.json(updatedContact);
+});
+
+exports.updateStatusContact = catchAsync(async (req, res) => {
+  const id = req.params.contactId;
+  const { favorite } = req.body;
   const updatedContact = await Contact.findByIdAndUpdate(
     id,
     {
-      name,
-      email,
-      phone,
       favorite,
     },
     { new: true }
