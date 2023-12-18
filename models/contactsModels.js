@@ -1,24 +1,25 @@
-const fs = require('fs/promises');
-const path = require('path');
+const { model, Schema } = require('mongoose');
 
-const contactsPath = path.join('models', 'contacts.json');
+const contactSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, 'Set name for contact'],
+  },
+  email: {
+    type: String,
+    required: [true, 'Set email for contact'],
+    unique: true,
+  },
+  phone: {
+    type: String,
+    required: [true, 'Set phone for contact'],
+  },
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-exports.getContacts = async () => {
-  try {
-    const contacts = JSON.parse(await fs.readFile(contactsPath));
-    return contacts;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-};
+const Contact = model('Contact', contactSchema);
 
-exports.writeContacts = async (contacts) => {
-  try {
-    await fs.writeFile(contactsPath, JSON.stringify(contacts));
-    return true;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-};
+module.exports = Contact;

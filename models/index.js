@@ -1,3 +1,9 @@
-const contactsModels = require('./contactsModels');
+// const contactsModels = require('./contactsModels');
 
-module.exports = contactsModels;
+// module.exports = contactsModels;
+
+// **************/
+
+const Contact = require('./contactsModels');
+
+module.exports = { Contact };

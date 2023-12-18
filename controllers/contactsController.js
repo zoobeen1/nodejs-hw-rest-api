@@ -1,11 +1,12 @@
 const uuid = require('uuid').v4;
 
 const { catchAsync, contactsValidators, HttpError } = require('../utils');
-const dataBase = require('../models');
+// const dataBase = require('../models');
+const { Contact } = require('../models');
 
 exports.listContacts = catchAsync(async (req, res) => {
-  const contacts = await dataBase.getContacts();
-  res.json(contacts);
+  // const contacts = await dataBase.getContacts();
+  // res.json(contacts);
 });
 exports.getContactById = (req, res) => {
   const { contact } = req;
@@ -16,31 +17,22 @@ exports.addContact = catchAsync(async ({ body }, res) => {
   if (error) {
     throw new HttpError(400, `missing required field: ${error.message}`);
   }
-  const { name, email, phone } = value;
-  const newContact = {
-    id: uuid(),
-    name,
-    email,
-    phone,
-  };
-  const contacts = await dataBase.getContacts();
-  contacts.push(newContact);
-  await dataBase.writeContacts(contacts);
+  const newContact = await Contact.create(value);
   res.status(201).json(newContact);
 });
 
 exports.updateContact = catchAsync(async (req, res) => {
   const { contact } = req;
-  const contacts = await dataBase.getContacts();
+  // const contacts = await dataBase.getContacts();
   const updatedContact = { ...contact, ...req.body };
 
-  const newContacts = contacts.map((item) => {
+  // const newContacts = contacts.map((item) => {
     if (item.id === contact.id) {
       return updatedContact;
     }
     return item;
   });
-  await dataBase.writeContacts(newContacts);
+  // await dataBase.writeContacts(newContacts);
   res.json(updatedContact);
 });
 

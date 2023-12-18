@@ -11,5 +11,6 @@ exports.createContactValidator = (data) =>
         })
         .required(),
       phone: Joi.string().min(9).max(20).required(),
+      favorite: Joi.boolean(),
     })
     .validate(data);
