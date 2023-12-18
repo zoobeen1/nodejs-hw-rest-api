@@ -1,16 +1,9 @@
-<<<<<<< Updated upstream
 const { catchAsync } = require('../utils');
 const { Contact } = require('../models');
 
 exports.getContacts = catchAsync(async (req, res) => {
   const contacts = await Contact.find();
-=======
-const { catchAsync, contactsValidators, HttpError } = require('../utils');
-const dataBase = require('../models');
 
-exports.listContacts = catchAsync(async (req, res) => {
-  const contacts = await dataBase.getContacts();
->>>>>>> Stashed changes
   res.json(contacts);
 });
 
