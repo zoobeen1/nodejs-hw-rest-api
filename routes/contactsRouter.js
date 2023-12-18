@@ -9,9 +9,9 @@ const router = express.Router();
 // contactsMiddlewares.checkFullBody,
 router
   .route('/')
-  .post(contactsController.addContact)
-  .get(contactsController.listContacts);
-router.use('/:contactId', contactsMiddlewares.checkId);
+  .post(contactsMiddlewares.checkAddContactData, contactsController.addContact)
+  .get(contactsController.getContacts);
+// router.use('/:contactId', contactsMiddlewares.checkId);
 router
   .route('/:contactId')
   .get(contactsController.getContactById)

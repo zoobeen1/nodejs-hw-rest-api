@@ -1,5 +1,5 @@
-const { getContacts } = require('../models');
-const { catchAsync, HttpError } = require('../utils');
+const { catchAsync, HttpError, contactsValidators } = require('../utils');
+const { Contact } = require('../models');
 
 exports.checkBody = (req, res, next) => {
   const bodyKeys = Object.keys(req.body);
@@ -13,15 +13,15 @@ exports.checkBody = (req, res, next) => {
   next();
 };
 
-exports.checkId = catchAsync(async (req, res, next) => {
-  const id = req.params.contactId;
-  const contacts = await getContacts();
-  const [contact] = contacts.filter((item) => item.id === id);
-
-  // example of use custom HttpError
-  if (id.length < 15) throw new HttpError(400, 'Invalid ID!');
-
-  if (!contact) throw new HttpError(404, `Contact ID: ${id} Not found`);
-  req.contact = contact;
+exports.checkAddContactData = catchAsync(async (req, res, next) => {
+  const { value, error } = contactsValidators.createContactValidator(req.body);
+  if (error) {
+    throw new HttpError(400, `missing required field: ${error.message}`);
+  }
+  const contactExist = await Contact.exists({ email: value.email });
+  if (contactExist) {
+    throw new HttpError(409, `Contact with email ${value.email} is exist!`);
+  }
+  req.contact = value;
   next();
 });
