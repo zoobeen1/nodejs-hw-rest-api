@@ -1,3 +1,4 @@
+const { Types } = require('mongoose');
 const { catchAsync, HttpError, contactsValidators } = require('../utils');
 const { Contact } = require('../models');
 
@@ -13,6 +14,19 @@ exports.checkBody = (req, res, next) => {
   next();
 };
 
+exports.checkFavoriteBody = (req, res, next) => {
+  const bodyKeys = Object.keys(req.body);
+  if (bodyKeys.length < 1) throw new HttpError(400, 'missing body');
+  if (bodyKeys.length > 1) throw new HttpError(400, 'Vrong body');
+
+  const check = bodyKeys.map((item) => {
+    if (item === 'favorite') return true;
+    return false;
+  });
+  if (check.includes(false)) throw new HttpError(400, 'missing field favorite');
+  next();
+};
+
 exports.checkAddContactData = catchAsync(async (req, res, next) => {
   const { value, error } = contactsValidators.createContactValidator(req.body);
   if (error) {
@@ -23,5 +37,19 @@ exports.checkAddContactData = catchAsync(async (req, res, next) => {
     throw new HttpError(409, `Contact with email ${value.email} is exist!`);
   }
   req.contact = value;
+  next();
+});
+
+exports.checkId = catchAsync(async (req, res, next) => {
+  const id = req.params.contactId;
+
+  const isIdValid = Types.ObjectId.isValid(id);
+  if (!isIdValid) {
+    throw new HttpError(404, 'Contact not found');
+  }
+  const contactExist = await Contact.exists({ _id: id });
+  if (!contactExist) {
+    throw new HttpError(404, 'Contact not found');
+  }
   next();
 });

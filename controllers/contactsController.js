@@ -8,33 +8,37 @@ exports.getContacts = catchAsync(async (req, res) => {
   const contacts = await Contact.find();
   res.json(contacts);
 });
-exports.getContactById = (req, res) => {
-  // const { contact } = req;
-  // res.json(contact);
-};
+
+exports.getContactById = catchAsync(async (req, res) => {
+  const id = req.params.contactId;
+  const contact = await Contact.findById(id);
+  res.json(contact);
+});
+
 exports.addContact = catchAsync(async (req, res) => {
   const newContact = await Contact.create(req.contact);
   res.status(201).json(newContact);
 });
 
 exports.updateContact = catchAsync(async (req, res) => {
-  // const { contact } = req;
-  // // const contacts = await dataBase.getContacts();
-  // const updatedContact = { ...contact, ...req.body };
-  // // const newContacts = contacts.map((item) => {
-  //   if (item.id === contact.id) {
-  //     return updatedContact;
-  //   }
-  //   return item;
-  // });
-  // // await dataBase.writeContacts(newContacts);
-  // res.json(updatedContact);
+  const id = req.params.contactId;
+  const { name, email, phone, favorite } = req.body;
+  const updatedContact = await Contact.findByIdAndUpdate(
+    id,
+    {
+      name,
+      email,
+      phone,
+      favorite,
+    },
+    { new: true }
+  );
+  res.json(updatedContact);
 });
 
 exports.removeContact = catchAsync(async (req, res) => {
-  // const contacts = await dataBase.getContacts();
-  // const { contact } = req;
-  // const filteredContacts = contacts.filter((item) => item.id !== contact.id);
-  // await dataBase.writeContacts(filteredContacts);
-  // res.status(200).json({ message: 'contact deleted' });
+  const id = req.params.contactId;
+  const deletedContact = await Contact.findByIdAndDelete(id);
+  console.log(deletedContact);
+  res.status(200).json({ message: 'contact deleted' });
 });
