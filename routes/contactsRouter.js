@@ -21,7 +21,7 @@ router
   .route('/:contactId/favorite')
   .patch(
     contactsMiddlewares.checkFavoriteBody,
-    contactsController.updateContact
+    contactsController.updateStatusContact
   );
 
 module.exports = router;
