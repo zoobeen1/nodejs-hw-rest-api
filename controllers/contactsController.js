@@ -1,7 +1,4 @@
-const uuid = require('uuid').v4;
-
 const { catchAsync } = require('../utils');
-
 const { Contact } = require('../models');
 
 exports.getContacts = catchAsync(async (req, res) => {
@@ -38,7 +35,6 @@ exports.updateContact = catchAsync(async (req, res) => {
 
 exports.removeContact = catchAsync(async (req, res) => {
   const id = req.params.contactId;
-  const deletedContact = await Contact.findByIdAndDelete(id);
-  console.log(deletedContact);
-  res.status(200).json({ message: 'contact deleted' });
+  await Contact.findByIdAndDelete(id);
+  res.status(200).json({ message: 'Contact deleted' });
 });

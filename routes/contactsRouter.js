@@ -6,7 +6,7 @@ const contactsMiddlewares = require('../middlewares');
 const router = express.Router();
 
 // CRUD
-// contactsMiddlewares.checkFullBody,
+
 router
   .route('/')
   .post(contactsMiddlewares.checkAddContactData, contactsController.addContact)

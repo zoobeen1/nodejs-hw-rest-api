@@ -1,13 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const dotenv = require('dotenv');
 const logger = require('morgan');
 const cors = require('cors');
 // Error handlers variant
 const createError = require('http-errors');
 
 const contactsRouter = require('./routes');
-const { collection } = require('./models/contactsModels');
 
 const app = express();
 // MongoConnection
