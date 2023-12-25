@@ -1,5 +1,6 @@
 const { Types } = require('mongoose');
-const { catchAsync, HttpError, contactsValidators } = require('../utils');
+const { catchAsync, HttpError } = require('../utils');
+const { contactsValidators } = require('../validators');
 const { Contact } = require('../models');
 
 exports.checkBody = (req, res, next) => {

@@ -1,3 +1,4 @@
 const contactsMiddlewares = require('./contactsMiddlewares');
+const usersMiddlewares = require('./usersMiddlewares');
 
-module.exports = contactsMiddlewares;
+module.exports = { contactsMiddlewares, usersMiddlewares };
