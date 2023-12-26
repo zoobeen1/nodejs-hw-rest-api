@@ -9,9 +9,11 @@ const router = express.Router();
 
 router
   .route('/register')
-  .post(usersMiddlewares.checkAddUserData, usersController.addUser);
+  .post(usersMiddlewares.checkAddUser, usersController.addUser);
 
-router.route('/login').post();
+router
+  .route('/login')
+  .post(usersMiddlewares.checkLoginUser, usersController.loginUser);
 
 router.route('/logout').post();
 

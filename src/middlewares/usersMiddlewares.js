@@ -3,16 +3,50 @@ const { catchAsync, HttpError } = require('../utils');
 const { usersValidators } = require('../validators');
 const { User } = require('../models');
 
-exports.checkAddUserData = catchAsync(async (req, res, next) => {
-  const { value, error } = usersValidators.createUserValidator(req.body);
+exports.checkAddUser = catchAsync(async (req, res, next) => {
+  const { value, error } = usersValidators.createUserDataValidator(
+    req.body
+  );
   if (error) {
-    throw new HttpError(400, `missing required field: ${error.message}`);
+    throw new HttpError(
+      400,
+      `Missing required field: ${error.message}..`
+    );
   }
   const userExist = await User.exists({ email: value.email });
   if (userExist) {
-    throw new HttpError(409, `User with email ${value.email} is exist!`);
+    throw new HttpError(409, `Email ${value.email} in use!`);
   }
   req.user = value;
+  next();
+});
+exports.checkLoginUser = catchAsync(async (req, res, next) => {
+  const { value, error } = usersValidators.createUserDataValidator(
+    req.body
+  );
+  if (error) {
+    throw new HttpError(
+      400,
+      `Missing required field: ${error.message}..`
+    );
+  }
+  const userExist = await User.exists({ email: value.email });
+  if (!userExist) {
+    throw new HttpError(401, 'Email or password is wrong');
+  }
+  req.user = value;
+  next();
+});
+
+exports.checkToken = catchAsync(async (req, res, next) => {
+  // const { value, error } = usersValidators.createUserValidator(req.body);
+  // if (error) {
+  //   throw new HttpError(400, `Missing required field: ${error.message}..`);
+  // }
+  // const userExist = await User.exists({ email: value.email });
+  // if (!userExist) {
+  //   throw new HttpError(401, 'Email or password is wrong');
+  // }
   next();
 });
 
