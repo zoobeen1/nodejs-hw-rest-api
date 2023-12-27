@@ -1,6 +1,7 @@
 const { Types } = require('mongoose');
 const { catchAsync, HttpError } = require('../utils');
 const { usersValidators } = require('../validators');
+const { userServices } = require('../services');
 const { User } = require('../models');
 
 exports.checkAddUser = catchAsync(async (req, res, next) => {
@@ -30,11 +31,18 @@ exports.checkLoginUser = catchAsync(async (req, res, next) => {
       `Missing required field: ${error.message}..`
     );
   }
+  // check user exist
   const userExist = await User.exists({ email: value.email });
   if (!userExist) {
     throw new HttpError(401, 'Email or password is wrong');
   }
-  req.user = value;
+
+  const user = await userServices.loginUser(value.email);
+  // check password is valid
+  if (!(await user.checkPassword(value.password))) {
+    throw new HttpError(401, 'Email or password is wrong');
+  }
+  req.user = user;
   next();
 });
 

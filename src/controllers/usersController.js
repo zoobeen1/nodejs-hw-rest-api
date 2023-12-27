@@ -1,14 +1,16 @@
 const { catchAsync } = require('../utils');
-const { User } = require('../models');
+const { userServices } = require('../services');
 
-exports.addUser = catchAsync(async (req, res) => {
-  // ToDo - Zasolka parolia
-  const { email, subscription } = await User.create(req.body);
-  res.status(201).json({ user: { email, subscription } });
+exports.add = catchAsync(async (req, res) => {
+  const newUser = await userServices.createUser(req.body);
+  res.status(201).json({ user: newUser });
 });
 
-exports.loginUser = catchAsync(async (req, res) => {
+exports.login = (req, res) => {
   // ToDo - Add token to user
-  const { email, subscription } = await User.findOne({ email: req.user.email });
-  res.status(201).json({ Message: 'Success', user: { email, subscription } });
-});
+
+  const { email, subscription } = req.user;
+  res
+    .status(201)
+    .json({ token: 'In process', user: { email, subscription } });
+};

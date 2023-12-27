@@ -1,11 +1,11 @@
 const { model, Schema } = require('mongoose');
+const { genSalt, hash, compare } = require('bcrypt');
 
 const userSchema = new Schema(
   {
     password: {
       type: String,
       required: [true, 'Password is required'],
-      select: false,
     },
     email: {
       type: String,
@@ -27,6 +27,17 @@ const userSchema = new Schema(
     versionKey: false,
   }
 );
+// Zasolka passworda (mongoose hook - pre)
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const salt = await genSalt(10);
+  this.password = await hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.checkPassword = function (candidat) {
+  return compare(candidat, this.password);
+};
 
 const User = model('User', userSchema);
 
