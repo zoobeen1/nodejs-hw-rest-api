@@ -15,8 +15,12 @@ router
   .route('/login')
   .post(usersMiddlewares.checkLoginUser, usersController.login);
 
-router.route('/logout').post();
+router
+  .route('/logout')
+  .post(usersMiddlewares.authenticate, usersController.logout);
 
-router.route('/current').get();
+router
+  .route('/current')
+  .get(usersMiddlewares.authenticate, usersController.current);
 
 module.exports = router;

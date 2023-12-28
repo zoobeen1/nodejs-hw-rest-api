@@ -2,27 +2,35 @@ const { catchAsync } = require('../utils');
 const { Contact } = require('../models');
 
 exports.getContacts = catchAsync(async (req, res) => {
-  const contacts = await Contact.find();
-
+  const { _id: owner } = req.user;
+  const contacts = await Contact.find(
+    { owner },
+    '-owner -createdAt -updatedAt'
+  );
   res.json(contacts);
 });
 
 exports.getContactById = catchAsync(async (req, res) => {
   const id = req.params.contactId;
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findById(id, '-owner');
   res.json(contact);
 });
 
 exports.addContact = catchAsync(async (req, res) => {
-  const newContact = await Contact.create(req.contact);
+  const { _id: owner } = req.user;
+  const newContact = await Contact.create({ ...req.contact, owner });
   res.status(201).json(newContact);
 });
 
 exports.updateContact = catchAsync(async (req, res) => {
   const id = req.params.contactId;
-  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
-    new: true,
-  });
+  const updatedContact = await Contact.findByIdAndUpdate(
+    id,
+    req.body,
+    {
+      new: true,
+    }
+  );
   res.json(updatedContact);
 });
 
