@@ -55,6 +55,7 @@ exports.checkAddContactData = catchAsync(async (req, res, next) => {
 
 exports.checkId = catchAsync(async (req, res, next) => {
   const id = req.params.contactId;
+  const { _id: owner } = req.user;
 
   const isIdValid = Types.ObjectId.isValid(id);
   if (!isIdValid) {
@@ -64,5 +65,10 @@ exports.checkId = catchAsync(async (req, res, next) => {
   if (!contactExist) {
     throw new HttpError(404, 'Contact not found');
   }
+  const contact = await Contact.findOne({ _id: id, owner }, '-owner');
+  if (!contact) {
+    throw new HttpError(403, 'Contact not found');
+  }
+  req.contact = contact;
   next();
 });
