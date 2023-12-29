@@ -1,8 +1,10 @@
 const { Types } = require('mongoose');
-const { catchAsync, HttpError } = require('../utils');
+const { catchAsync, Errors } = require('../utils');
 const { usersValidators } = require('../validators');
 const { userServices } = require('../services');
 const { User } = require('../models');
+
+const { HttpError } = Errors;
 
 exports.checkAddUser = catchAsync(async (req, res, next) => {
   const { value, error } = usersValidators.createUserDataValidator(
@@ -52,6 +54,9 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   const user = await User.findById(id);
   if (!user) {
     throw new HttpError(401, 'Authorization error...');
+  }
+  if (user.token !== token) {
+    throw new HttpError(403, 'Authorization error...');
   }
   req.user = user;
   next();

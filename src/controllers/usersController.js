@@ -1,5 +1,5 @@
 const { userServices } = require('../services');
-const { catchAsync, HttpError } = require('../utils');
+const { catchAsync } = require('../utils');
 
 exports.add = catchAsync(async (req, res) => {
   const { email, subscription } = await userServices.createUser(
@@ -19,6 +19,6 @@ exports.logout = catchAsync(async (req, res) => {
   await userServices.updateUser({ token: null });
   res.status(204).json();
 });
-exports.current = catchAsync(async (req, res) => {
+exports.current = (req, res) => {
   res.status(200).json(req.user);
-});
+};

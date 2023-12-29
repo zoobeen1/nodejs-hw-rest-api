@@ -1,11 +1,15 @@
 const { Types } = require('mongoose');
-const { catchAsync, HttpError } = require('../utils');
+const { catchAsync, Errors } = require('../utils');
 const { contactsValidators } = require('../validators');
 const { Contact } = require('../models');
 
+const { HttpError } = Errors;
+
 exports.checkBody = (req, res, next) => {
   const bodyKeys = Object.keys(req.body);
-  if (bodyKeys.length < 1) throw new HttpError(400, 'missing body');
+  if (bodyKeys.length < 1) {
+    throw new HttpError(400, 'missing body');
+  }
 
   const check = bodyKeys.map((item) => {
     if (item === 'name' || item === 'email' || item === 'phone') {

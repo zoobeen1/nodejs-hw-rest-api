@@ -10,12 +10,10 @@ exports.getContacts = catchAsync(async (req, res) => {
   res.json(contacts);
 });
 
-exports.getContactById = catchAsync(async (req, res) => {
-  // const { _id: owner } = req.user;
-  // const id = req.params.contactId;
-  // const contact = await Contact.findOne({ _id: id, owner }, '-owner');
+exports.getContactById = (req, res) => {
+  // find is in midleware
   res.json(req.contact);
-});
+};
 
 exports.addContact = catchAsync(async (req, res) => {
   const { _id: owner } = req.user;
@@ -24,7 +22,6 @@ exports.addContact = catchAsync(async (req, res) => {
 });
 
 exports.updateContact = catchAsync(async (req, res) => {
-  // const { _id: owner } = req.user;
   const id = req.params.contactId;
   const updatedContact = await Contact.findByIdAndUpdate(
     id,

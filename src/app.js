@@ -17,7 +17,8 @@ mongoose
     process.exit(1);
   });
 
-const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
+const formatsLogger =
+  app.get('env') === 'development' ? 'dev' : 'short';
 
 // Middlewares
 app.use(logger(formatsLogger));
@@ -26,7 +27,7 @@ app.use(express.json());
 // Router
 app.use('/api/users', usersRouter);
 app.use('/api/contacts', contactsRouter);
-// Error 404 - variant
+// Error 404 - variant vith - "http-errors" librari
 app.use((req, res, next) => {
   next(createError(404, 'Wrong Path'));
 });
