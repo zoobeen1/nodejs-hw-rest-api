@@ -1,11 +1,11 @@
 require('dotenv').config({
   path:
     process.env.NODE_ENV === 'production'
-      ? './enves/prod.env'
-      : './enves/dev.env',
+      ? './src/enves/prod.env'
+      : './src/enves/dev.env',
 });
 
-const app = require('./app');
+const app = require('./src/app');
 
 const port = process.env.PORT;
 

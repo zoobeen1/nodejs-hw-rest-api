@@ -1,5 +1,6 @@
 const { Types } = require('mongoose');
-const { catchAsync, HttpError, contactsValidators } = require('../utils');
+const { catchAsync, HttpError } = require('../utils');
+const { contactsValidators } = require('../validators');
 const { Contact } = require('../models');
 
 exports.checkBody = (req, res, next) => {
@@ -7,7 +8,9 @@ exports.checkBody = (req, res, next) => {
   if (bodyKeys.length < 1) throw new HttpError(400, 'missing body');
 
   const check = bodyKeys.map((item) => {
-    if (item === 'name' || item === 'email' || item === 'phone') return true;
+    if (item === 'name' || item === 'email' || item === 'phone') {
+      return true;
+    }
     return false;
   });
   if (check.includes(false)) throw new HttpError(400, 'vrong fields');
@@ -23,18 +26,28 @@ exports.checkFavoriteBody = (req, res, next) => {
     if (item === 'favorite') return true;
     return false;
   });
-  if (check.includes(false)) throw new HttpError(400, 'missing field favorite');
+  if (check.includes(false)) {
+    throw new HttpError(400, 'missing field favorite');
+  }
   next();
 };
 
 exports.checkAddContactData = catchAsync(async (req, res, next) => {
-  const { value, error } = contactsValidators.createContactValidator(req.body);
+  const { value, error } = contactsValidators.createContactValidator(
+    req.body
+  );
   if (error) {
-    throw new HttpError(400, `missing required field: ${error.message}`);
+    throw new HttpError(
+      400,
+      `missing required field: ${error.message}`
+    );
   }
   const contactExist = await Contact.exists({ email: value.email });
   if (contactExist) {
-    throw new HttpError(409, `Contact with email ${value.email} is exist!`);
+    throw new HttpError(
+      409,
+      `Contact with email ${value.email} is exist!`
+    );
   }
   req.contact = value;
   next();

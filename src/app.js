@@ -5,7 +5,7 @@ const cors = require('cors');
 // Error handlers variant
 const createError = require('http-errors');
 
-const contactsRouter = require('./routes');
+const { contactsRouter, usersRouter } = require('./routes');
 
 const app = express();
 // MongoConnection
@@ -24,6 +24,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 // Router
+app.use('/api/users', usersRouter);
 app.use('/api/contacts', contactsRouter);
 // Error 404 - variant
 app.use((req, res, next) => {
