@@ -15,8 +15,9 @@ exports.login = catchAsync(async (req, res) => {
   res.status(201).json({ token, user: { email, subscription } });
 });
 exports.logout = catchAsync(async (req, res) => {
-  // ToDo - How remove token!?!
-  await userServices.updateUser({ token: null });
+  const { id } = req.user;
+  console.log(id);
+  await userServices.updateUser({ id, token: null });
   res.status(204).json();
 });
 exports.current = (req, res) => {
