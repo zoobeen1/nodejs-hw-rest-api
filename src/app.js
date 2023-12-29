@@ -2,8 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('morgan');
 const cors = require('cors');
-// Error handlers variant
-const createError = require('http-errors');
+
+const { httpError } = require('./utils');
 
 const { contactsRouter, usersRouter } = require('./routes');
 
@@ -27,9 +27,9 @@ app.use(express.json());
 // Router
 app.use('/api/users', usersRouter);
 app.use('/api/contacts', contactsRouter);
-// Error 404 - variant vith - "http-errors" librari
+// Error 404
 app.use((req, res, next) => {
-  next(createError(404, 'Wrong Path'));
+  next(httpError(404, 'Wrong Path'));
 });
 
 // Global Errors handler

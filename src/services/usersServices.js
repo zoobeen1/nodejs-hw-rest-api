@@ -15,7 +15,6 @@ exports.createUser = async (userData) => {
 };
 exports.updateUser = async (data) => {
   const { id, token } = data;
-  console.log(id, ' ', token);
   await User.updateOne({ _id: id }, { token });
 };
 exports.loginUser = (email) =>
@@ -33,7 +32,6 @@ exports.tokenVerify = (token) => {
     const result = jwt.verify(token, SECRET_KEY);
     return result;
   } catch (err) {
-    console.log('Token error!');
-    return undefined;
+    return null;
   }
 };
