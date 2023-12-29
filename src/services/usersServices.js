@@ -14,7 +14,9 @@ exports.createUser = async (userData) => {
   return user;
 };
 exports.updateUser = async (data) => {
-  await User.updateOne(data);
+  const { id, token } = data;
+  console.log(id, ' ', token);
+  await User.updateOne({ _id: id }, { token });
 };
 exports.loginUser = (email) =>
   User.findOne({

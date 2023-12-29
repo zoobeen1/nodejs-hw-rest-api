@@ -33,6 +33,7 @@ exports.checkLoginUser = catchAsync(async (req, res, next) => {
   }
 
   const user = await userServices.loginUser(value.email);
+  console.log(user);
   // check user email exist and password is valid
   if (!user || !(await user.checkPassword(value.password))) {
     throw new HttpError(401, 'Email or password is wrong');
@@ -55,6 +56,7 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   if (!user) {
     throw new HttpError(401, 'Authorization error...');
   }
+  console.log(user.id, ' ', user.token, ' !== ', token);
   if (user.token !== token) {
     throw new HttpError(403, 'Authorization error...');
   }

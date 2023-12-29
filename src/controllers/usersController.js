@@ -11,7 +11,7 @@ exports.add = catchAsync(async (req, res) => {
 exports.login = catchAsync(async (req, res) => {
   const { id, email, subscription } = req.user;
   const token = userServices.tokenGenerator(id);
-  await userServices.updateUser({ token });
+  await userServices.updateUser({ id, token });
   res.status(201).json({ token, user: { email, subscription } });
 });
 exports.logout = catchAsync(async (req, res) => {
