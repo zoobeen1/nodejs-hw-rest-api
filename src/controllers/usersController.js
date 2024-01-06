@@ -16,7 +16,6 @@ exports.login = catchAsync(async (req, res) => {
 });
 exports.logout = catchAsync(async (req, res) => {
   const { id } = req.user;
-  console.log(id);
   await userServices.updateUser({ id, token: null });
   res.status(204).json();
 });
