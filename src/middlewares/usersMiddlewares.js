@@ -74,31 +74,5 @@ exports.checkId = catchAsync(async (req, res, next) => {
   }
   next();
 });
-/*
-// simple multer ***********
-// config storage
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cbk) => {
-    cbk(null, 'public/avatars');
-  },
-  filename: (req, file, cbk) => {
-    const extension = file.mimetype.split('/')[1];
-    cbk(null, `${req.user.id}.${extension}`);
-  },
-});
-// config filter
-const multerFilter = (req, file, cbk) => {
-  if (file.mimetype.startsWith('image/')) {
-    cbk(null, true);
-  } else cbk(httpError(400, 'Images only!!!'));
-};
 
-exports.uploadUserAvatar = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-  limits: {
-    fileSize: 2 * 1024 * 1024,
-  },
-}).single('avatar');
-// /*************************** */
 exports.uploadUserAvatar = ImageService.initUploadImage('avatar');
