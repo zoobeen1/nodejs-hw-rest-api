@@ -7,6 +7,7 @@ const fse = require('fs-extra');
 const { httpError } = require('../utils');
 
 class ImageService {
+  // Midleware
   static initUploadImage(field) {
     const multerStorage = multer.memoryStorage();
     const multerFilter = (req, file, cbk) => {
@@ -20,11 +21,14 @@ class ImageService {
     }).single(field);
   }
 
+  // Image resize and save
+
   static async imageSave(
     file,
     options = { maxSize: 1, height: 250, width: 250 },
     ...pathSegments
   ) {
+    // Restructuring and defaults
     const maxSize = options.maxSize ?? 1;
     const height = options.height ?? 250;
     const width = options.width ?? 250;

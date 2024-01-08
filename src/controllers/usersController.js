@@ -24,7 +24,6 @@ exports.current = (req, res) => {
 };
 exports.avatar = catchAsync(async (req, res) => {
   const { id } = req.user;
-  // const avatarURL = `/avatars/${req.file.filename}`;
   // legends for imageSave: (file, options, pathDetails)
   // legends for options: {maxSize, height, width}
   const avatarURL = await ImageService.imageSave(
