@@ -14,8 +14,8 @@ exports.createUser = async (userData) => {
   return user;
 };
 exports.updateUser = async (data) => {
-  const { id, token } = data;
-  await User.updateOne({ _id: id }, { token });
+  const { id, ...restData } = data;
+  await User.updateOne({ _id: id }, { ...restData });
 };
 exports.loginUser = (email) =>
   User.findOne({
@@ -23,7 +23,7 @@ exports.loginUser = (email) =>
   });
 exports.tokenGenerator = (payload) => {
   const token = jwt.sign({ id: payload }, SECRET_KEY, {
-    expiresIn: '23h',
+    expiresIn: '2h',
   });
   return token;
 };
@@ -35,3 +35,4 @@ exports.tokenVerify = (token) => {
     return null;
   }
 };
+exports.gravatarCreate = () => {};

@@ -22,5 +22,11 @@ router
 router
   .route('/current')
   .get(usersMiddlewares.authenticate, usersController.current);
-
+router
+  .route('/avatars')
+  .patch(
+    usersMiddlewares.authenticate,
+    usersMiddlewares.uploadUserAvatar,
+    usersController.avatar
+  );
 module.exports = router;

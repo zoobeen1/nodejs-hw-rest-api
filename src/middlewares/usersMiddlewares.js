@@ -1,8 +1,9 @@
 const { Types } = require('mongoose');
 const { catchAsync, httpError } = require('../utils');
 const { usersValidators } = require('../validators');
-const { userServices } = require('../services');
+const { userService, ImageService } = require('../services');
 const { User } = require('../models');
+// const multer = require('multer');
 
 exports.checkAddUser = catchAsync(async (req, res, next) => {
   const { value, error } = usersValidators.createUserDataValidator(
@@ -29,7 +30,7 @@ exports.checkLoginUser = catchAsync(async (req, res, next) => {
     next(httpError(400, 'Email or password is wrong'));
   }
 
-  const user = await userServices.loginUser(value.email);
+  const user = await userService.loginUser(value.email);
 
   // check user email exist and password is valid
   if (!user || !(await user.checkPassword(value.password))) {
@@ -45,7 +46,7 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   if (bearer !== 'Bearer') {
     next(httpError(401, 'Authorization error...'));
   }
-  const result = userServices.tokenVerify(token);
+  const result = userService.tokenVerify(token);
   if (!result) {
     next(httpError(401, 'Authorization error...'));
   }
@@ -73,3 +74,31 @@ exports.checkId = catchAsync(async (req, res, next) => {
   }
   next();
 });
+/*
+// simple multer ***********
+// config storage
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cbk) => {
+    cbk(null, 'public/avatars');
+  },
+  filename: (req, file, cbk) => {
+    const extension = file.mimetype.split('/')[1];
+    cbk(null, `${req.user.id}.${extension}`);
+  },
+});
+// config filter
+const multerFilter = (req, file, cbk) => {
+  if (file.mimetype.startsWith('image/')) {
+    cbk(null, true);
+  } else cbk(httpError(400, 'Images only!!!'));
+};
+
+exports.uploadUserAvatar = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  },
+}).single('avatar');
+// /*************************** */
+exports.uploadUserAvatar = ImageService.initUploadImage('avatar');

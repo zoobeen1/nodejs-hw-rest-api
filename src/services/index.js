@@ -1,3 +1,4 @@
-const userServices = require('./usersServices');
+const userService = require('./userService');
+const ImageService = require('./imageService');
 
-module.exports = { userServices };
+module.exports = { userService, ImageService };
