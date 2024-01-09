@@ -42,6 +42,7 @@ class ImageService {
       'public',
       ...pathSegments
     );
+    // ensuring directory path
     await fse.ensureDir(fullPath);
     // JIMP
     Jimp.read(file.buffer, (err, img) => {
