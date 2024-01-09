@@ -1,8 +1,8 @@
-const { userServices } = require('../services');
-const { catchAsync, HttpError } = require('../utils');
+const { userService, ImageService } = require('../services');
+const { catchAsync } = require('../utils');
 
 exports.add = catchAsync(async (req, res) => {
-  const { email, subscription } = await userServices.createUser(
+  const { email, subscription } = await userService.createUser(
     req.body
   );
   res.status(201).json({ user: { email, subscription } });
@@ -10,15 +10,33 @@ exports.add = catchAsync(async (req, res) => {
 
 exports.login = catchAsync(async (req, res) => {
   const { id, email, subscription } = req.user;
-  const token = userServices.tokenGenerator(id);
-  await userServices.updateUser({ token });
+  const token = userService.tokenGenerator(id);
+  await userService.updateUser({ id, token });
   res.status(201).json({ token, user: { email, subscription } });
 });
 exports.logout = catchAsync(async (req, res) => {
-  // ToDo - How remove token!?!
-  await userServices.updateUser({ token: null });
+  const { id } = req.user;
+  await userService.updateUser({ id, token: null });
   res.status(204).json();
 });
-exports.current = catchAsync(async (req, res) => {
+exports.current = (req, res) => {
   res.status(200).json(req.user);
+};
+exports.avatar = catchAsync(async (req, res) => {
+  const { id } = req.user;
+  // legends for imageSave: (file, options, pathDetails)
+  // legends for options: {maxSize, height, width}
+  const avatarURL = await ImageService.imageSave(
+    req.file,
+    {
+      maxSize: 2,
+    },
+    'avatars',
+    id
+  );
+  await userService.updateUser({
+    id,
+    avatarURL,
+  });
+  res.status(200).json({ avatarURL });
 });

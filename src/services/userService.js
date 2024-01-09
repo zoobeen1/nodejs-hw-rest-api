@@ -14,7 +14,8 @@ exports.createUser = async (userData) => {
   return user;
 };
 exports.updateUser = async (data) => {
-  await User.updateOne(data);
+  const { id, ...restData } = data;
+  await User.updateOne({ _id: id }, { ...restData });
 };
 exports.loginUser = (email) =>
   User.findOne({
@@ -22,7 +23,7 @@ exports.loginUser = (email) =>
   });
 exports.tokenGenerator = (payload) => {
   const token = jwt.sign({ id: payload }, SECRET_KEY, {
-    expiresIn: '23h',
+    expiresIn: '2h',
   });
   return token;
 };
@@ -31,7 +32,7 @@ exports.tokenVerify = (token) => {
     const result = jwt.verify(token, SECRET_KEY);
     return result;
   } catch (err) {
-    console.log('Token error!');
-    return undefined;
+    return null;
   }
 };
+exports.gravatarCreate = () => {};
