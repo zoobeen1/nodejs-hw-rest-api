@@ -60,9 +60,7 @@ exports.verification = catchAsync(async (req, res) => {
 });
 exports.resendEmail = catchAsync(async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    throw httpError(400, 'missing required field email');
-  }
+
   const { verificationToken, verify } = await User.findOne({ email });
 
   if (verify) {
@@ -72,5 +70,8 @@ exports.resendEmail = catchAsync(async (req, res) => {
     token: verificationToken,
     email,
   });
-  res.status(200).json({ send });
+  if (!send) {
+    throw httpError(404);
+  }
+  res.status(200).json({ message: 'Verification email sent' });
 });
