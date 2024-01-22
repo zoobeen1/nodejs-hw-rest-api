@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const { sendEmail } = require('./emailService');
 
 const { SECRET_KEY } = process.env;
 /**
@@ -36,9 +37,8 @@ exports.tokenVerify = (token) => {
     return null;
   }
 };
-exports.sendVerificationEmail = async (data) => {
-  const { email, token } = data;
-  console.log(data);
+exports.sendVerificationEmail = (data) => {
+  sendEmail(data);
 };
 
 exports.emailVerify = async (token) => {

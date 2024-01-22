@@ -4,7 +4,7 @@ const { catchAsync, httpError } = require('../utils');
 exports.add = catchAsync(async (req, res) => {
   const { email } = req.body;
   const token = userService.tokenGenerator(email);
-  await userService.sendVerificationEmail({ token, email });
+  userService.sendVerificationEmail({ token, email });
   const { subscription } = await userService.createUser({
     ...req.body,
     verificationToken: token,
@@ -46,18 +46,14 @@ exports.avatar = catchAsync(async (req, res) => {
 });
 exports.verification = catchAsync(async (req, res) => {
   const token = req.params.verificationToken;
-  console.log(token);
+
   if (!token) {
     throw httpError(404);
-    return;
   }
-  const ver = await userService.emailVerify(
-    req.params.verificationToken
-  );
+  const ver = await userService.emailVerify(token);
 
   if (!ver) {
-    throw httpError(404, 'User not found!');
-    return;
+    throw httpError(404);
   }
   res.status(200).json({ message: 'Verification successful' });
 });

@@ -36,6 +36,9 @@ exports.checkLoginUser = catchAsync(async (req, res, next) => {
   if (!user || !(await user.checkPassword(value.password))) {
     next(httpError(401, 'Email or password is wrong'));
   }
+  if (!user.verify) {
+    next(httpError(404, 'Verification is required! Check email.'));
+  }
   req.user = user;
   next();
 });
@@ -56,9 +59,6 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   }
   if (user.token !== token) {
     next(httpError(403, 'Authorization error...'));
-  }
-  if (!user.verify) {
-    next(httpError(404, 'Verification is required! Check email.'));
   }
   req.user = user;
   next();
