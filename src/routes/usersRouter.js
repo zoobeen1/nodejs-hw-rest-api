@@ -40,5 +40,10 @@ router.get(
   '/verify/:verificationToken',
   usersController.verification
 );
+router.post(
+  '/verify/',
+  usersMiddlewares.checkResendEmailData,
+  usersController.resendEmail
+);
 
 module.exports = router;

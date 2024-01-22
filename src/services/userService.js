@@ -38,13 +38,14 @@ exports.tokenVerify = (token) => {
   }
 };
 exports.sendVerificationEmail = (data) => {
-  sendEmail(data);
+  console.log(data);
+  return sendEmail(data);
 };
 
 exports.emailVerify = async (token) => {
   try {
     const user = await User.findOne({ verificationToken: token });
-    console.log(user);
+
     if (user) {
       user.verificationToken = null;
       user.verify = true;

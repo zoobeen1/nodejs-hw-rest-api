@@ -1,5 +1,6 @@
 const { userService, ImageService } = require('../services');
 const { catchAsync, httpError } = require('../utils');
+const { User } = require('../models');
 
 exports.add = catchAsync(async (req, res) => {
   const { email } = req.body;
@@ -56,4 +57,20 @@ exports.verification = catchAsync(async (req, res) => {
     throw httpError(404);
   }
   res.status(200).json({ message: 'Verification successful' });
+});
+exports.resendEmail = catchAsync(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw httpError(400, 'missing required field email');
+  }
+  const { verificationToken, verify } = await User.findOne({ email });
+
+  if (verify) {
+    throw httpError(400, 'Verification has already been passed');
+  }
+  const send = userService.sendVerificationEmail({
+    token: verificationToken,
+    email,
+  });
+  res.status(200).json({ send });
 });

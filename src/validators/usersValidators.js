@@ -20,3 +20,17 @@ exports.createUserDataValidator = (data) =>
     })
 
     .validate(data);
+exports.UserEmaillidator = (data) =>
+  Joi.object()
+    .options({ abortEarly: false })
+    .keys({
+      email: Joi.string()
+        .email({
+          minDomainSegments: 2,
+          tlds: {
+            allow: ['com', 'net', 'ua', 'ru'],
+          },
+        })
+        .required(),
+    })
+    .validate(data);

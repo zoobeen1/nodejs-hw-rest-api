@@ -22,6 +22,16 @@ exports.checkAddUser = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkResendEmailData = catchAsync(async (req, res, next) => {
+  const { value, error } = usersValidators.UserEmaillidator(req.body);
+  if (error) {
+    next(
+      httpError(400, `Missing required field: ${error.message}..`)
+    );
+  }
+  next();
+});
+
 exports.checkLoginUser = catchAsync(async (req, res, next) => {
   const { value, error } = usersValidators.createUserDataValidator(
     req.body

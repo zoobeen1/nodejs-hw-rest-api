@@ -24,6 +24,12 @@ exports.sendEmail = (data) => {
   };
   transporter
     .sendMail(options)
-    .then((info) => console.log(info))
-    .catch((err) => console.log(err));
+    .then((info) => {
+      console.log(info);
+      return true;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
 };
