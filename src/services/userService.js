@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const { sendEmail } = require('./emailService');
 
 const { SECRET_KEY } = process.env;
 /**
@@ -32,7 +33,27 @@ exports.tokenVerify = (token) => {
     const result = jwt.verify(token, SECRET_KEY);
     return result;
   } catch (err) {
+    console.log(err);
     return null;
   }
 };
-exports.gravatarCreate = () => {};
+exports.sendVerificationEmail = (data) => {
+  return sendEmail(data);
+};
+
+exports.emailVerify = async (token) => {
+  try {
+    const user = await User.findOne({ verificationToken: token });
+
+    if (user) {
+      user.verificationToken = null;
+      user.verify = true;
+      user.save();
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};

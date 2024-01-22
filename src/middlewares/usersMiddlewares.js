@@ -22,6 +22,16 @@ exports.checkAddUser = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkResendEmailData = catchAsync(async (req, res, next) => {
+  const { value, error } = usersValidators.UserEmaillidator(req.body);
+  if (error) {
+    next(
+      httpError(400, `Missing required field: ${error.message}..`)
+    );
+  }
+  next();
+});
+
 exports.checkLoginUser = catchAsync(async (req, res, next) => {
   const { value, error } = usersValidators.createUserDataValidator(
     req.body
@@ -35,6 +45,9 @@ exports.checkLoginUser = catchAsync(async (req, res, next) => {
   // check user email exist and password is valid
   if (!user || !(await user.checkPassword(value.password))) {
     next(httpError(401, 'Email or password is wrong'));
+  }
+  if (!user.verify) {
+    next(httpError(404, 'Verification is required! Check email.'));
   }
   req.user = user;
   next();

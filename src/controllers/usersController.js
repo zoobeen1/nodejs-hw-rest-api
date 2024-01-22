@@ -1,10 +1,15 @@
 const { userService, ImageService } = require('../services');
-const { catchAsync } = require('../utils');
+const { catchAsync, httpError } = require('../utils');
+const { User } = require('../models');
 
 exports.add = catchAsync(async (req, res) => {
-  const { email, subscription } = await userService.createUser(
-    req.body
-  );
+  const { email } = req.body;
+  const token = userService.tokenGenerator(email);
+  userService.sendVerificationEmail({ token, email });
+  const { subscription } = await userService.createUser({
+    ...req.body,
+    verificationToken: token,
+  });
   res.status(201).json({ user: { email, subscription } });
 });
 
@@ -39,4 +44,34 @@ exports.avatar = catchAsync(async (req, res) => {
     avatarURL,
   });
   res.status(200).json({ avatarURL });
+});
+exports.verification = catchAsync(async (req, res) => {
+  const token = req.params.verificationToken;
+
+  if (!token) {
+    throw httpError(404);
+  }
+  const ver = await userService.emailVerify(token);
+
+  if (!ver) {
+    throw httpError(404);
+  }
+  res.status(200).json({ message: 'Verification successful' });
+});
+exports.resendEmail = catchAsync(async (req, res) => {
+  const { email } = req.body;
+
+  const { verificationToken, verify } = await User.findOne({ email });
+
+  if (verify) {
+    throw httpError(400, 'Verification has already been passed');
+  }
+  const send = userService.sendVerificationEmail({
+    token: verificationToken,
+    email,
+  });
+  if (!send) {
+    throw httpError(404);
+  }
+  res.status(200).json({ message: 'Verification email sent' });
 });
