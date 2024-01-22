@@ -7,26 +7,38 @@ const router = express.Router();
 
 // CRUD
 
-router
-  .route('/register')
-  .post(usersMiddlewares.checkAddUser, usersController.add);
+router.post(
+  '/register',
+  usersMiddlewares.checkAddUser,
+  usersController.add
+);
 
-router
-  .route('/login')
-  .post(usersMiddlewares.checkLoginUser, usersController.login);
+router.post(
+  '/login',
+  usersMiddlewares.checkLoginUser,
+  usersController.login
+);
 
-router
-  .route('/logout')
-  .post(usersMiddlewares.authenticate, usersController.logout);
+router.post(
+  '/logout',
+  usersMiddlewares.authenticate,
+  usersController.logout
+);
 
-router
-  .route('/current')
-  .get(usersMiddlewares.authenticate, usersController.current);
-router
-  .route('/avatars')
-  .patch(
-    usersMiddlewares.authenticate,
-    usersMiddlewares.uploadUserAvatar,
-    usersController.avatar
-  );
+router.get(
+  '/current',
+  usersMiddlewares.authenticate,
+  usersController.current
+);
+router.patch(
+  '/avatars',
+  usersMiddlewares.authenticate,
+  usersMiddlewares.uploadUserAvatar,
+  usersController.avatar
+);
+router.get(
+  '/verify/:verificationToken',
+  usersController.verification
+);
+
 module.exports = router;

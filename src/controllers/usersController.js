@@ -1,10 +1,14 @@
 const { userService, ImageService } = require('../services');
-const { catchAsync } = require('../utils');
+const { catchAsync, httpError } = require('../utils');
 
 exports.add = catchAsync(async (req, res) => {
-  const { email, subscription } = await userService.createUser(
-    req.body
-  );
+  const { email } = req.body;
+  const token = userService.tokenGenerator(email);
+  await userService.sendVerificationEmail({ token, email });
+  const { subscription } = await userService.createUser({
+    ...req.body,
+    verificationToken: token,
+  });
   res.status(201).json({ user: { email, subscription } });
 });
 
@@ -39,4 +43,21 @@ exports.avatar = catchAsync(async (req, res) => {
     avatarURL,
   });
   res.status(200).json({ avatarURL });
+});
+exports.verification = catchAsync(async (req, res) => {
+  const token = req.params.verificationToken;
+  console.log(token);
+  if (!token) {
+    throw httpError(404);
+    return;
+  }
+  const ver = await userService.emailVerify(
+    req.params.verificationToken
+  );
+
+  if (!ver) {
+    throw httpError(404, 'User not found!');
+    return;
+  }
+  res.status(200).json({ message: 'Verification successful' });
 });

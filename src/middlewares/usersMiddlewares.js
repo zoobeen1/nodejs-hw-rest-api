@@ -57,6 +57,9 @@ exports.authenticate = catchAsync(async (req, res, next) => {
   if (user.token !== token) {
     next(httpError(403, 'Authorization error...'));
   }
+  if (!user.verify) {
+    next(httpError(404, 'Verification is required! Check email.'));
+  }
   req.user = user;
   next();
 });
