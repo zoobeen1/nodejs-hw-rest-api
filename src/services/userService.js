@@ -38,7 +38,6 @@ exports.tokenVerify = (token) => {
   }
 };
 exports.sendVerificationEmail = (data) => {
-  console.log(data);
   return sendEmail(data);
 };
 
